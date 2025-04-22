@@ -1,7 +1,5 @@
 import torch.nn as nn
-from models.image_encoder import ImageEncoder
-from models.text_encoder import TextEncoder
-from models.mask_decoder import UNetDecoder
+from models import TextEncoder, ImageEncoder, UNetDecoder
 
 class GroundingModel(nn.Module):
     def __init__(self):

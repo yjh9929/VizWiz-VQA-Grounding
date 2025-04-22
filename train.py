@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from dataset import VizWizGroundingDataset
 from utils import to_device, compute_iou
-from models.model import GroundingModel
+from models import TextEncoder, ImageEncoder, GroundingModel
 
 # config
 with open("config.yml", "r") as f:

@@ -3,7 +3,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import torchvision.transforms as T
 import os
-from models.model import GroundingModel
+from models import TextEncoder, ImageEncoder, GroundingModel
 
 # 모델 로드
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
