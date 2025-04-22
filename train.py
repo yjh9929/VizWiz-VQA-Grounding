@@ -26,6 +26,13 @@ train_loader = DataLoader(train_set, batch_size=config["batch_size"], shuffle=Tr
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = GroundingModel().to(device)
 
+'''
+# GPU 병렬 사용
+model = GroundingModel()
+model = torch.nn.DataParallel(model, device_ids=[0, 1])
+model = model.to("cuda")
+'''
+
 # optimizer / loss
 optimizer = optim.Adam(model.parameters(), lr=config["lr"])
 loss_fn = nn.BCELoss()
@@ -57,3 +64,7 @@ for epoch in range(config["num_epochs"]):
 
 # save
 torch.save(model.state_dict(), "outputs/model.pt")
+'''
+# GPU 병렬 사용
+torch.save(model.module.state_dict(), "outputs/model.pt")
+'''

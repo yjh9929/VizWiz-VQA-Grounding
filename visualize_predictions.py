@@ -41,8 +41,8 @@ plt.imshow(mask, alpha=0.5, cmap="jet")
 plt.title("Predicted Mask")
 
 # 저장
-os.makedirs("result", exist_ok=True)
-save_path = "result/VizWiz_val_00000000_masked.png"
+os.makedirs("result/model", exist_ok=True)
+save_path = "result/model/VizWiz_val_00000001_masked.png"
 plt.savefig(save_path)
 plt.close()
 
