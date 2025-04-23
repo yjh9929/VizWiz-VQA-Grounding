@@ -1,7 +1,13 @@
 # VizWiz-VQA-Grounding
-2025 1st place (will)
+2025 1st place (will)  
+ This project was developed for the [VizWiz-VQA-Grounding Challenge](https://vizwiz.org/tasks-and-datasets/visual-qa/) 2025. The goal is to return grounded visual evidence for answers to visual questions posed by people with visual impairments. 
 
-## Project 구조
+
+## 🎶Task Objective
+Given an image-question pair, the task is to predict the region in the image that supports the most common answer. This is known as **answer grounding**, and predictions are evaluated based on **mean Intersection over Union (IoU)** with human-annotated binary masks.
+
+
+## 📂Project Structure
 ```project/
 ├── README.md
 ├── models/ │
@@ -27,8 +33,18 @@
 ├── visualize_predictions.py
 ├── IoU.py
 ├── metrics.py
-└── config.yml```
+└── config.yml
+```
+## ⚙️ Installation
 
 
+## 🚀 Running the Code
 
+## 🧠 Model Design
+
+## 📊 Evaluation
+
+## 🔗 References
+
+## 📝 License
 
