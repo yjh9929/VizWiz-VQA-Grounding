@@ -19,8 +19,8 @@ Given an image-question pair, the task is to predict the region in the image tha
     └── model.py # me
 ├── data/ │
     ├── binary_masks_png/ │
-    │ ├── train/ │
-    │ └── val/ │
+    │   ├── train/ │
+    │   └── val/ │
 ├── test/ │
 ├── train/ │
 ├── val/ │
