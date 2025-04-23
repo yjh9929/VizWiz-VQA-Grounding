@@ -12,8 +12,8 @@ model.load_state_dict(torch.load("outputs/model.pt", map_location=device))
 model.eval()
 
 # 테스트 데이터
-image_path = "data/vizwiz/val/VizWiz_val_00000001.jpg"
-question = "Can you tell me what this medicine is please?"
+image_path = "data/vizwiz/test/VizWiz_test_00000006.jpg"
+question = "What does it say on here?"
 text_input = [f"Q: {question}"]
 
 # 전처리
@@ -42,7 +42,7 @@ plt.title("Predicted Mask")
 
 # 저장
 os.makedirs("result/model", exist_ok=True)
-save_path = "result/model/VizWiz_val_00000001_masked.png"
+save_path = "result/model/VizWiz_test_00000006_masked.png"
 plt.savefig(save_path)
 plt.close()
 

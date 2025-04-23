@@ -1,29 +1,39 @@
 from models.model import GroundingModel
-from dataset import VizWizGroundingDataset
 from metrics import compute_iou
-import torch
 from torchvision.transforms import ToTensor
 from PIL import Image
-import os
+import torch, json, os
+
+# 경로 설정
+val_json = "data/vizwiz/val_grounding.json"
+image_dir = "data/vizwiz/val"
+mask_dir = "data/vizwiz/binary_masks_png/val"
 
 # 1. 모델 로드
-from models.model import GroundingModel
 model = GroundingModel()
 model.load_state_dict(torch.load("outputs/model.pt"))
 model.eval().cuda()
 
-# 2. 데이터 준비
-image_path = "data/vizwiz/val/VizWiz_val_00000001.jpg"
-mask_path = "data/vizwiz/binary_masks_png/val/VizWiz_val_00000001.png"
-text = "Can you tell me what this medicine is please?"
+# 2. val json 불러오기
+with open(val_json, "r") as f:
+    val_data = json.load(f)
 
-image = ToTensor()(Image.open(image_path).convert("RGB")).unsqueeze(0).cuda()
-true_mask = ToTensor()(Image.open(mask_path).convert("L")).unsqueeze(0).cuda()
+# 3. IoU 계산
+ious = []
+for filename, meta in val_data.items():
+    image_path = os.path.join(image_dir, filename)
+    mask_path = os.path.join(mask_dir, filename.replace(".jpg", ".png"))
+    if not os.path.exists(image_path) or not os.path.exists(mask_path):
+        continue
 
-# 3. 예측
-with torch.no_grad():
-    pred_mask = model(image, text)
+    image = ToTensor()(Image.open(image_path).convert("RGB")).unsqueeze(0).cuda()
+    true_mask = ToTensor()(Image.open(mask_path).convert("L")).unsqueeze(0).cuda()
+    text = f"Q: {meta['question']} A: {meta.get('most_common_answer', '')}"
 
-# 4. IoU 계산
-iou = compute_iou(pred_mask, true_mask)
-print(f"IoU: {iou:.4f}")
+    with torch.no_grad():
+        pred_mask = model(image, text)
+
+    iou = compute_iou(pred_mask, true_mask)
+    ious.append(iou)    
+# 4. 평균 IoU 출력
+print(f"Mean IoU over {len(ious)} samples: {sum(ious)/len(ious):.4f}")
