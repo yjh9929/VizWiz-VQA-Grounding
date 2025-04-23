@@ -1,4 +1,4 @@
-# VizWiz-VQA-Grounding
+# VizWiz-VQA-Grounding (2025)
 2025 1st place (will)  
  This project was developed for the [VizWiz-VQA-Grounding Challenge](https://vizwiz.org/tasks-and-datasets/visual-qa/) 2025. The goal is to return grounded visual evidence for answers to visual questions posed by people with visual impairments. 
 
