@@ -3,12 +3,14 @@
 
 ## Project 구조
 project/
+    README.md
     models/
         __init__.py
         image_encoder.py
         text_encoder.py -> me
         concat.py -> me
         mask_decoder.py -> unet 
+        model.py -> me
     data/
         binary_masks_png/
             train/
@@ -23,5 +25,9 @@ project/
     dataset.py
     utils.py
     config.yml
-    model.py -> me
+    IoU.py
+    metrics.py
+    visualize_predictions.py
+
+  
 
