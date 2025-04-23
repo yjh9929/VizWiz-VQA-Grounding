@@ -42,7 +42,7 @@ plt.title("Predicted Mask")
 
 # 저장
 os.makedirs("result/model", exist_ok=True)
-save_path = "result/model/VizWiz_test_00000006_masked.png"
+save_path = "result/model/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
 plt.savefig(save_path)
 plt.close()
 
