@@ -47,5 +47,5 @@ Given an image-question pair, the task is to predict the region in the image tha
 ## 🔗 References
 
 ## 📝 License
-Creative Commons License  
+<a href="http://creativecommons.org/licenses/by/4.0/" rel="license"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons License"></a>  
 This work is licensed under a Creative Commons Attribution 4.0 International License.
