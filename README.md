@@ -21,9 +21,9 @@ Given an image-question pair, the task is to predict the region in the image tha
     ├── binary_masks_png/ │
     │   ├── train/ │
     │   └── val/ │
-├── test/ │
-├── train/ │
-├── val/ │
+    ├── test/ │
+    ├── train/ │
+    ├── val/ │
     ├── test_grounding.json │
     ├── train_grounding.json │
     └── val_grounding.json
