@@ -9,5 +9,8 @@ model:
 
 dataset:
   train_json: data/vizwiz/train_grounding.json
-  image_root: data/vizwiz/train
-  mask_root: data/vizwiz/binary_masks_png/train
+  val_json: data/vizwiz/val_grounding.json  
+  train_image_root: data/vizwiz/train  
+  train_mask_root: data/vizwiz/binary_masks_png/train  
+  val_image_root: data/vizwiz/val            
+  val_mask_root: data/vizwiz/binary_masks_png/val 
