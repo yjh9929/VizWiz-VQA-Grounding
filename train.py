@@ -5,9 +5,13 @@ from torch.utils.data import DataLoader
 import yaml
 from tqdm import tqdm
 
+import os
+
 from dataset import VizWizGroundingDataset
 from utils import to_device, compute_iou
 from models import TextEncoder, ImageEncoder, GroundingModel
+
+os.makedirs("outputs", exist_ok=True)
 
 # config
 with open("config.yml", "r") as f:
@@ -62,8 +66,21 @@ for epoch in range(config["num_epochs"]):
 
     print(f"[Epoch {epoch+1}] Total Loss: {total_loss:.4f}")
 
+    #10 epoch마다 checkpoint 저장
+    if (epoch + 1) % 10 == 0:
+        os.makedirs("outputs", exist_ok=True)
+        checkpoint_path = f"outputs/checkpoint_epoch{epoch+1}.pt"
+        torch.save(model.state_dict(), checkpoint_path)
+        print(f"Checkpoint saved at {checkpoint_path}")
+
+
+
+
+
+
+os.makedirs("outputs", exist_ok=True)
 # save
-torch.save(model.state_dict(), "outputs/model.pt")
+torch.save(model.state_dict(), "outputs/model_haesol_1.pt")
 '''
 # GPU 병렬 사용
 torch.save(model.module.state_dict(), "outputs/model.pt")
