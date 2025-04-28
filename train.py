@@ -63,7 +63,7 @@ for epoch in range(config["num_epochs"]):
     print(f"[Epoch {epoch+1}] Total Loss: {total_loss:.4f}")
 
 # save
-torch.save(model.state_dict(), "outputs/model.pt")
+torch.save(model.state_dict(), "outputs/model_jihee_clip_base.pt")
 '''
 # GPU 병렬 사용
 torch.save(model.module.state_dict(), "outputs/model.pt")

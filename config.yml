@@ -1,10 +1,10 @@
 batch_size: 4
-num_epochs: 100
+num_epochs: 10
 lr: 0.0001
 image_size: [224, 224]
 
 model:
-  encoder: resnet18
+  encoder: clip-vit-base
   decoder: unet
 
 dataset:
