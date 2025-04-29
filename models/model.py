@@ -4,7 +4,7 @@ from models import TextEncoder, ImageEncoder, UNetDecoder
 class GroundingModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.image_encoder = ImageEncoder()  # model_name 기본값 "openai/clip-vit-base-patch32"
+        self.image_encoder = ImageEncoder()
         self.text_encoder = TextEncoder()
 
         self.fusion = nn.Sequential(
