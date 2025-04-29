@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+
 
 class UNetDecoder(nn.Module):
     def __init__(self, in_channels=512, mid_channels=[256, 128, 64, 32], out_channels=1):
@@ -62,6 +64,8 @@ class UNetDecoder(nn.Module):
         self.final_conv = nn.Conv2d(mid_channels[3], out_channels, kernel_size=1)
         self.activation = nn.Sigmoid()
     
+    import torch.nn.functional as F
+
     def forward(self, x, enc_feat3, enc_feat2, enc_feat1):
         """
         x: 인코더의 최종 출력 특징 (예: 512채널 bottleneck 특징맵)
@@ -70,24 +74,35 @@ class UNetDecoder(nn.Module):
         enc_feat1: 얕은 인코더 특징 (예: 64채널, 1/2 스케일)
         """
         # 1단계 업샘플 + skip 연결 + 합성곱
-        x = self.upconvs[0](x)                  # 512 -> 256 채널, 해상도 2배 (1/16 -> 1/8)
-        x = torch.cat([x, enc_feat3], dim=1)    # skip 연결 (채널 concat, 결과 채널 512)
-        x = self.dec_blocks[0](x)               # 합성곱 블록 (출력: 256채널, 1/8)
+        x = self.upconvs[0](x)  # 512 -> 256채널, 해상도 2배
+        if x.shape[2:] != enc_feat3.shape[2:]:
+            enc_feat3 = F.interpolate(enc_feat3, size=x.shape[2:], mode="bilinear", align_corners=False)
+        x = torch.cat([x, enc_feat3], dim=1)
+        x = self.dec_blocks[0](x)
+
         # 2단계 업샘플 + skip 연결 + 합성곱
-        x = self.upconvs[1](x)                  # 256 -> 128 채널, 해상도 2배 (1/8 -> 1/4)
-        x = torch.cat([x, enc_feat2], dim=1)    # skip 연결 (채널 concat, 결과 채널 256)
-        x = self.dec_blocks[1](x)               # 합성곱 블록 (출력: 128채널, 1/4)
+        x = self.upconvs[1](x)  # 256 -> 128채널, 해상도 2배
+        if x.shape[2:] != enc_feat2.shape[2:]:
+            enc_feat2 = F.interpolate(enc_feat2, size=x.shape[2:], mode="bilinear", align_corners=False)
+        x = torch.cat([x, enc_feat2], dim=1)
+        x = self.dec_blocks[1](x)
+
         # 3단계 업샘플 + skip 연결 + 합성곱
-        x = self.upconvs[2](x)                  # 128 -> 64 채널, 해상도 2배 (1/4 -> 1/2)
-        x = torch.cat([x, enc_feat1], dim=1)    # skip 연결 (채널 concat, 결과 채널 128)
-        x = self.dec_blocks[2](x)               # 합성곱 블록 (출력: 64채널, 1/2)
-        # 4단계 업샘플 + 합성곱 (최종 단계는 skip 연결 없음)
-        x = self.upconvs[3](x)                  # 64 -> 32 채널, 해상도 2배 (1/2 -> 원본 크기)
-        x = self.dec_blocks[3](x)               # 합성곱 블록 (출력: 32채널, 원본 크기)
-        # 최종 1x1 컨볼루션 및 Sigmoid 활성화
-        x = self.final_conv(x)                 # 32채널 -> 1채널
-        mask = self.activation(x)              # Sigmoid로 [0,1] 범위로 변환
+        x = self.upconvs[2](x)  # 128 -> 64채널, 해상도 2배
+        if x.shape[2:] != enc_feat1.shape[2:]:
+            enc_feat1 = F.interpolate(enc_feat1, size=x.shape[2:], mode="bilinear", align_corners=False)
+        x = torch.cat([x, enc_feat1], dim=1)
+        x = self.dec_blocks[2](x)
+
+        # 4단계 업샘플 + 합성곱
+        x = self.upconvs[3](x)  # 64 -> 32채널, 해상도 2배
+        x = self.dec_blocks[3](x)
+
+        # 최종 출력
+        x = self.final_conv(x)
+        mask = self.activation(x)
         return mask
+
 
 # 사용 예시:
 # encoder_outputs = [enc_feat1 (1/2), enc_feat2 (1/4), enc_feat3 (1/8), bottleneck_feature (1/16)]
