@@ -20,7 +20,15 @@ train_set = VizWizGroundingDataset(
     mask_root=config["dataset"]["mask_root"],
     image_size=tuple(config["image_size"])
 )
-train_loader = DataLoader(train_set, batch_size=config["batch_size"], shuffle=True)
+
+train_loader = DataLoader(
+    train_set,
+    batch_size=32,
+    shuffle=True,
+    num_workers=8,
+    pin_memory=True,
+    prefetch_factor=2 
+)
 
 # model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -61,6 +69,7 @@ for epoch in range(config["num_epochs"]):
         loop.set_postfix(loss=loss.item())
 
     print(f"[Epoch {epoch+1}] Total Loss: {total_loss:.4f}")
+
 
 # save
 torch.save(model.state_dict(), "outputs/model_jihee_clip_base.pt")
