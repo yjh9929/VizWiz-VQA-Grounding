@@ -23,7 +23,7 @@ train_set = VizWizGroundingDataset(
 
 train_loader = DataLoader(
     train_set,
-    batch_size=32,
+    batch_size=4,
     shuffle=True,
     num_workers=8,
     pin_memory=True,
