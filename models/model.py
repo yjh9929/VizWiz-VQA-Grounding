@@ -8,11 +8,11 @@ class GroundingModel(nn.Module):
         self.text_encoder = TextEncoder()
 
         self.fusion = nn.Sequential(
-            nn.Linear(512, 1024),  
+            nn.Linear(512, 768),  
             nn.ReLU(),
-            nn.Linear(1024, 1024),# 512 → 1024
+            nn.Linear(768, 768),# 512 → 768
         )
-        self.decoder = UNetDecoder(in_channels=1024)  # 512 → 1024
+        self.decoder = UNetDecoder(in_channels=768)  # 512 → 768
 
     def forward(self, image, text):
         bottleneck = self.image_encoder(image)

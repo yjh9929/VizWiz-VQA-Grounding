@@ -8,7 +8,6 @@ from tqdm import tqdm
 from dataset import VizWizGroundingDataset
 from utils import to_device, compute_iou
 from models import TextEncoder, ImageEncoder, GroundingModel
-from torch.cuda.amp import autocast, GradScaler
 
 # config
 with open("config.yml", "r") as f:
@@ -21,15 +20,7 @@ train_set = VizWizGroundingDataset(
     mask_root=config["dataset"]["mask_root"],
     image_size=tuple(config["image_size"])
 )
-
-train_loader = DataLoader(
-    train_set,
-    batch_size=32,
-    shuffle=True,
-    num_workers=8,  # ✅ 24 → 8~12 정도로 줄이자
-    pin_memory=True,
-    prefetch_factor=2  # 4 → 2로 줄이면 부담 덜함
-)
+train_loader = DataLoader(train_set, batch_size=config["batch_size"], shuffle=True)
 
 # model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -44,7 +35,7 @@ model = model.to("cuda")
 
 # optimizer / loss
 optimizer = optim.Adam(model.parameters(), lr=config["lr"])
-loss_fn = nn.BCEWithLogitsLoss()
+loss_fn = nn.BCELoss()
 
 # training loop
 for epoch in range(config["num_epochs"]):
@@ -58,13 +49,11 @@ for epoch in range(config["num_epochs"]):
         masks = batch["mask"]
         texts = batch["text"]
 
+        pred_masks = model(images, texts)
+        pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
+
+        loss = loss_fn(pred_masks, masks)
         optimizer.zero_grad()
-
-        with autocast():  # ✅ 여기서 model()과 loss만
-            pred_masks = model(images, texts)
-            pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
-            loss = loss_fn(pred_masks, masks)
-
         loss.backward()
         optimizer.step()
 
@@ -73,9 +62,8 @@ for epoch in range(config["num_epochs"]):
 
     print(f"[Epoch {epoch+1}] Total Loss: {total_loss:.4f}")
 
-
 # save
-torch.save(model.state_dict(), "outputs/clip-vit-large-patch14.pt")
+torch.save(model.state_dict(), "outputs/model_jihee_clip_base.pt")
 '''
 # GPU 병렬 사용
 torch.save(model.module.state_dict(), "outputs/model.pt")
