@@ -26,9 +26,10 @@ train_loader = DataLoader(
     train_set,
     batch_size=config["batch_size"],
     shuffle=True,
-    num_workers=8,
+    num_workers=4,  # ✅ 8 이상 쓰지 말자
     pin_memory=True,
-    prefetch_factor=2  
+    prefetch_factor=2,
+    persistent_workers=False
 )
 
 # model
@@ -50,8 +51,6 @@ loss_fn = nn.BCEWithLogitsLoss()
 for epoch in range(config["num_epochs"]):
     model.train()
     total_loss = 0
-    num_batches = 0
-
 
     loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config['num_epochs']}")
     for batch in loop:
@@ -59,8 +58,6 @@ for epoch in range(config["num_epochs"]):
         images = batch["image"]
         masks = batch["mask"]
         texts = batch["text"]
-        num_batches += 1
-
 
         optimizer.zero_grad()
 
@@ -74,9 +71,9 @@ for epoch in range(config["num_epochs"]):
 
         total_loss += loss.item()
         loop.set_postfix(loss=loss.item())
-    average_loss = total_loss / num_batches
-    print(f"[Epoch {epoch+1}] Average Loss: {average_loss:.4f}")
 
+    print(f"[Epoch {epoch+1}] Total Loss: {total_loss:.4f}")
+    
 # save
 torch.save(model.state_dict(), "outputs/clip-vit-large-patch14.pt")
 '''
