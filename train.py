@@ -24,7 +24,7 @@ train_set = VizWizGroundingDataset(
 
 train_loader = DataLoader(
     train_set,
-    batch_size=32,
+    batch_size=config["batch_size"],
     shuffle=True,
     num_workers=8,  # ✅ 24 → 8~12 정도로 줄이자
     pin_memory=True,
