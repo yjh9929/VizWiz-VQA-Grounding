@@ -10,7 +10,6 @@ class UNetDecoder(nn.Module):
             nn.ConvTranspose2d(256, 64, 2, stride=2),
             nn.ReLU(),
             nn.Conv2d(64, 1, kernel_size=1),
-            nn.Sigmoid()
         )
 
     def forward(self, x):

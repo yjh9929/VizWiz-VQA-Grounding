@@ -2,7 +2,7 @@ import torch.nn as nn
 from transformers import CLIPModel
 
 class ImageEncoder(nn.Module):
-    def __init__(self, model_name="openai/clip-vit-base-patch32"):
+    def __init__(self, model_name="openai/clip-vit-large-patch14-336"):
         super(ImageEncoder, self).__init__()
         clip_model = CLIPModel.from_pretrained(model_name)
         self.vision_encoder = clip_model.vision_model

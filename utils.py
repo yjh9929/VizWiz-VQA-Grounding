@@ -3,7 +3,6 @@ import torch
 def to_device(batch, device):
     return {k: v.to(device) if torch.is_tensor(v) else v for k, v in batch.items()}
 
-
 def compute_iou(pred, gt, threshold=0.5):
     pred_bin = (pred > threshold).float()
     intersection = (pred_bin * gt).sum()
