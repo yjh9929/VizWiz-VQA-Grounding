@@ -26,9 +26,9 @@ train_loader = DataLoader(
     train_set,
     batch_size=config["batch_size"],
     shuffle=True,
-    num_workers=8,  # ✅ 24 → 8~12 정도로 줄이자
+    num_workers=8,
     pin_memory=True,
-    prefetch_factor=2  # 4 → 2로 줄이면 부담 덜함
+    prefetch_factor=2  
 )
 
 # model
@@ -50,6 +50,8 @@ loss_fn = nn.BCEWithLogitsLoss()
 for epoch in range(config["num_epochs"]):
     model.train()
     total_loss = 0
+    num_batches = 0
+
 
     loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config['num_epochs']}")
     for batch in loop:
@@ -57,10 +59,12 @@ for epoch in range(config["num_epochs"]):
         images = batch["image"]
         masks = batch["mask"]
         texts = batch["text"]
+        num_batches += 1
+
 
         optimizer.zero_grad()
 
-        with autocast():  # ✅ 여기서 model()과 loss만
+        with autocast():
             pred_masks = model(images, texts)
             pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
             loss = loss_fn(pred_masks, masks)
@@ -70,9 +74,8 @@ for epoch in range(config["num_epochs"]):
 
         total_loss += loss.item()
         loop.set_postfix(loss=loss.item())
-
-    print(f"[Epoch {epoch+1}] Total Loss: {total_loss:.4f}")
-
+    average_loss = total_loss / num_batches
+    print(f"[Epoch {epoch+1}] Average Loss: {average_loss:.4f}")
 
 # save
 torch.save(model.state_dict(), "outputs/clip-vit-large-patch14.pt")
