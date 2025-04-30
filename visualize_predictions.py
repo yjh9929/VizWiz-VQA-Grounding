@@ -41,8 +41,8 @@ plt.imshow(mask, alpha=0.5, cmap="jet")
 plt.title("Predicted Mask")
 
 # 저장
-os.makedirs("result/clip-vit-large-patch14-336_epoch100", exist_ok=True)
-save_path = "result/clip-vit-large-patch14-336_epoch100/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
+os.makedirs("result/model_336_epoch10", exist_ok=True)
+save_path = "result/model_336_epoch10/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
 plt.savefig(save_path)
 plt.close()
 
