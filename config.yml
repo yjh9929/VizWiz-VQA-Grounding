@@ -1,9 +1,6 @@
 batch_size: 4
-<<<<<<< HEAD
 num_epochs: 10
-=======
-num_epochs: 5
->>>>>>> feat/data-aug
+
 lr: 0.0001
 image_size: [224, 224]
 
@@ -12,9 +9,9 @@ model:
   decoder: unet
 
 dataset:
-  train_json: data/vizwiz/train_grounding.json
-  val_json: data/vizwiz/val_grounding.json  
-  train_image_root: data/vizwiz/train  
-  train_mask_root: data/vizwiz/binary_masks_png/train  
-  val_image_root: data/vizwiz/val            
-  val_mask_root: data/vizwiz/binary_masks_png/val 
+  train_json: data/train_grounding.json
+  val_json: data/val_grounding.json  
+  train_image_root: data/train  
+  train_mask_root: data/binary_masks_png/train  
+  val_image_root: data//val            
+  val_mask_root: data/binary_masks_png/val 
