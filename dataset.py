@@ -17,7 +17,6 @@ class VizWizGroundingDataset(Dataset):
         # train/val 구분해서 transform 설정
         if not self.is_test:
             self.image_tf = T.Compose([
-
                 T.Resize((336, 336)),
                 T.RandomCrop(image_size),
                 T.RandomHorizontalFlip(),
@@ -44,7 +43,6 @@ class VizWizGroundingDataset(Dataset):
 
     def __getitem__(self, idx):
         filename, meta = self.entries[idx]
-        
         image = Image.open(os.path.join(self.image_root, filename)).convert("RGB")
         question = meta["question"]
         answer = meta.get("most_common_answer", "")
@@ -65,5 +63,4 @@ class VizWizGroundingDataset(Dataset):
 
         image = self.image_tf(image)
         mask = self.mask_tf(mask)
-
         return {"image": image, "text": text, "mask": mask, "filename": filename}
