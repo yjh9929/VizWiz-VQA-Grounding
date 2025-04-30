@@ -17,13 +17,14 @@ class VizWizGroundingDataset(Dataset):
         # train/val 구분해서 transform 설정
         if not self.is_test:
             self.image_tf = T.Compose([
-                T.Resize((256, 256)),
+
+                T.Resize((336, 336)),
                 T.RandomCrop(image_size),
                 T.RandomHorizontalFlip(),
                 T.ToTensor()
             ])
             self.mask_tf = T.Compose([
-                T.Resize((256, 256)),
+                T.Resize((336, 336)),
                 T.RandomCrop(image_size),
                 T.RandomHorizontalFlip(),
                 T.ToTensor()

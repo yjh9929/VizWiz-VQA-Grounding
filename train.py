@@ -1,4 +1,5 @@
 import torch
+from torch.cuda.amp import autocast, GradScaler  # ✅ 추가
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -31,8 +32,22 @@ val_set = VizWizGroundingDataset(
     mask_root=config["dataset"]["val_mask_root"],
     image_size=tuple(config["image_size"])
 )
-train_loader = DataLoader(train_set, batch_size=config["batch_size"], shuffle=True)
-val_loader = DataLoader(val_set, batch_size=config["batch_size"], shuffle=False)
+train_loader = DataLoader(
+    train_set,
+    batch_size=config["batch_size"],
+    shuffle=True,
+    num_workers=config["num_workers"],  # ✅ 24 → 8~12 정도로 줄이자
+    pin_memory=True,
+    prefetch_factor=2  # 4 → 2로 줄이면 부담 덜함
+)
+val_loader = DataLoader(
+    val_set,
+    batch_size=config["batch_size"],
+    shuffle=True,
+    num_workers=config["num_workers"],  # ✅ 24 → 8~12 정도로 줄이자
+    pin_memory=True,
+    prefetch_factor=2  # 4 → 2로 줄이면 부담 덜함
+)
 
 # model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -40,7 +55,8 @@ model = GroundingModel().to(device)
 
 # optimizer / loss
 optimizer = optim.Adam(model.parameters(), lr=config["lr"])
-loss_fn = nn.BCELoss()
+loss_fn = nn.BCEWithLogitsLoss()
+scaler = GradScaler()
 
 # resume checkpoint
 resume_path = config.get("resume_checkpoint", None)
@@ -78,8 +94,14 @@ for epoch in range(start_epoch, config["num_epochs"]):
 
         loss = loss_fn(pred_masks, masks)
         optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        with autocast():
+            pred_masks = model(images, texts)
+            pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
+            loss = loss_fn(pred_masks, masks)
+
+        scaler.scale(loss).backward()  # ✅ AMP 대응
+        scaler.step(optimizer)
+        scaler.update()
 
         total_loss += loss.item()
         loop.set_postfix(loss=loss.item())
@@ -127,5 +149,5 @@ torch.save(model.state_dict(), f"outputs/model_final_epoch{config['num_epochs']}
 
 '''
 # GPU 병렬 사용
-torch.save(model.module.state_dict(), "outputs/model.pt")
+torch.save(model.module.state_dict(), "outputs/clip-vit-large-patch14-336_epoch100.pt")
 '''
