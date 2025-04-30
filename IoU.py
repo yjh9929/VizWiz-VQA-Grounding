@@ -6,14 +6,14 @@ import torch, json, os
 import torch.nn.functional as F
 
 # 경로 설정
-val_json = "data/vizwiz/val_grounding.json"
-image_dir = "data/vizwiz/val"
-mask_dir = "data/vizwiz/binary_masks_png/val"
+val_json = "data/val_grounding.json"
+image_dir = "data/val"
+mask_dir = "data/binary_masks_png/val"
 
 # 1. 모델 로드
 model = GroundingModel()
-model.load_state_dict(torch.load("outputs/model_haesol_1.pt"))
-model.eval().cuda()
+model.load_state_dict(torch.load("outputs/model.pt"))
+model.eval()
 
 # 2. val json 불러오기
 with open(val_json, "r") as f:
@@ -27,8 +27,8 @@ for filename, meta in val_data.items():
     if not os.path.exists(image_path) or not os.path.exists(mask_path):
         continue
 
-    image = ToTensor()(Image.open(image_path).convert("RGB")).unsqueeze(0).cuda()
-    true_mask = ToTensor()(Image.open(mask_path).convert("L")).unsqueeze(0).cuda()
+    image = ToTensor()(Image.open(image_path).convert("RGB")).unsqueeze(0)
+    true_mask = ToTensor()(Image.open(mask_path).convert("L")).unsqueeze(0)
     text = f"Q: {meta['question']} A: {meta.get('most_common_answer', '')}"
 
     with torch.no_grad():
