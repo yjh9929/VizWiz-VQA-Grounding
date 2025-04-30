@@ -12,7 +12,7 @@ mask_dir = "data/vizwiz/binary_masks_png/val"
 
 # 1. 모델 로드
 model = GroundingModel()
-model.load_state_dict(torch.load("outputs/model_haesol_1.pt"))
+model.load_state_dict(torch.load("outputs/checkpoint_epoch30.pt"))
 model.eval().cuda()
 
 # 2. val json 불러오기
