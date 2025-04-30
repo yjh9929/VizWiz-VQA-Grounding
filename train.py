@@ -4,6 +4,8 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import yaml
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+import os
 
 from dataset import VizWizGroundingDataset
 from utils import to_device, compute_iou
@@ -37,6 +39,10 @@ model = GroundingModel().to(device)
 optimizer = optim.Adam(model.parameters(), lr=config["lr"])
 loss_fn = nn.BCELoss()
 
+# loss history
+train_loss_history = []
+val_loss_history = []
+
 # training loop
 for epoch in range(config["num_epochs"]):
     model.train()
@@ -61,6 +67,7 @@ for epoch in range(config["num_epochs"]):
         loop.set_postfix(loss=loss.item())
 
     avg_train_loss = total_loss / len(train_loader)
+    train_loss_history.append(avg_train_loss)
     print(f"[Epoch {epoch+1}] Average Training Loss: {avg_train_loss:.4f}")
 
     # validation
@@ -82,11 +89,23 @@ for epoch in range(config["num_epochs"]):
             val_loop.set_postfix(loss=loss.item())
 
     avg_val_loss = val_loss / len(val_loader)
+    val_loss_history.append(avg_val_loss)
     print(f"[Epoch {epoch+1}] Average Validation Loss: {avg_val_loss:.4f}")
 
-# save
-torch.save(model.state_dict(), "outputs/model_0428_01.pt")
-'''
-# GPU 병렬 사용
-torch.save(model.module.state_dict(), "outputs/model.pt")
-'''
+# save model
+os.makedirs("outputs", exist_ok=True)
+torch.save(model.state_dict(), "outputs/model_0430_01.pt")
+print("✅ Model saved to: outputs/model_0428_01.pt")
+
+# visualize loss curve
+plt.figure()
+plt.plot(train_loss_history, label='Train Loss')
+plt.plot(val_loss_history, label='Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Training & Validation Loss')
+plt.legend()
+plt.grid(True)
+plt.savefig('outputs/loss_curve.png')
+plt.close()
+print("📈 Loss curve saved to outputs/loss_curve.png")
