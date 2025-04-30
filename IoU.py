@@ -3,6 +3,7 @@ from metrics import compute_iou
 from torchvision.transforms import ToTensor
 from PIL import Image
 import torch, json, os
+import torch.nn.functional as F
 
 # 경로 설정
 val_json = "data/vizwiz/val_grounding.json"
@@ -11,7 +12,7 @@ mask_dir = "data/vizwiz/binary_masks_png/val"
 
 # 1. 모델 로드
 model = GroundingModel()
-model.load_state_dict(torch.load("outputs/model.pt"))
+model.load_state_dict(torch.load("outputs/model_haesol_1.pt"))
 model.eval().cuda()
 
 # 2. val json 불러오기

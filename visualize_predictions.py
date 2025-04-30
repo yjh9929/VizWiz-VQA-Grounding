@@ -8,7 +8,9 @@ from models import TextEncoder, ImageEncoder, GroundingModel
 # 모델 로드
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = GroundingModel().to(device)
-model.load_state_dict(torch.load("outputs/model_test_0427_01.pt", map_location=device))
+
+model.load_state_dict(torch.load("outputs/model_haesol_1.pt", map_location=device))
+
 model.eval()
 
 # 테스트 데이터
@@ -46,8 +48,8 @@ plt.imshow(mask, cmap="gray", alpha=0.5)
 plt.title("Predicted Mask")
 
 # 저장
-os.makedirs("result/model", exist_ok=True)
-save_path = "result/model/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
+os.makedirs("result/model_haesol_1", exist_ok=True)
+save_path = "result/model_haesol_1/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
 plt.savefig(save_path)
 plt.close()
 
