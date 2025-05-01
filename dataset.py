@@ -2,11 +2,12 @@ from torch.utils.data import Dataset
 from PIL import Image
 import os, json
 import torchvision.transforms as T
+import torchvision.transforms.functional as TF
 import torch
 import random
 
 class VizWizGroundingDataset(Dataset):
-    def __init__(self, json_path, image_root, mask_root=None, image_size=(224, 224), is_test=False):
+    def __init__(self, json_path, image_root, mask_root=None, image_size=(336, 336), is_test=False):
         self.data = json.load(open(json_path))
         self.image_root = image_root
         self.mask_root = mask_root
@@ -14,35 +15,15 @@ class VizWizGroundingDataset(Dataset):
         self.image_size = image_size
         self.entries = list(self.data.items())
 
-        # train/val 구분해서 transform 설정
-        if not self.is_test:
-            self.image_tf = T.Compose([
-                T.Resize((336, 336)),
-                T.RandomCrop(image_size),
-                T.RandomHorizontalFlip(),
-                T.ToTensor()
-            ])
-            self.mask_tf = T.Compose([
-                T.Resize((336, 336)),
-                T.RandomCrop(image_size),
-                T.RandomHorizontalFlip(),
-                T.ToTensor()
-            ])
-        else:
-            self.image_tf = T.Compose([
-                T.Resize(image_size),
-                T.ToTensor()
-            ])
-            self.mask_tf = T.Compose([
-                T.Resize(image_size),
-                T.ToTensor()
-            ])
+        self.resize = T.Resize(image_size)
+        self.to_tensor = T.ToTensor()
 
     def __len__(self):
         return len(self.entries)
 
     def __getitem__(self, idx):
         filename, meta = self.entries[idx]
+
         image = Image.open(os.path.join(self.image_root, filename)).convert("RGB")
         question = meta["question"]
         answer = meta.get("most_common_answer", "")
@@ -54,13 +35,31 @@ class VizWizGroundingDataset(Dataset):
         else:
             mask = Image.new("L", self.image_size)
 
-        # training일 때만 rotation 적용
+        # Resize 이미지/마스크 (동일하게)
+        image = self.resize(image)
+        mask = self.resize(mask)
+
+        # 동일한 증강 적용 (rotation + flip)
         if not self.is_test:
+            # 회전
             angle = random.choice([0, 90, 180, 270])
             if angle != 0:
                 image = image.rotate(angle)
                 mask = mask.rotate(angle)
 
-        image = self.image_tf(image)
-        mask = self.mask_tf(mask)
-        return {"image": image, "text": text, "mask": mask, "filename": filename}
+            # 좌우 반전
+            if random.random() > 0.5:
+                image = TF.hflip(image)
+                mask = TF.hflip(mask)
+
+        # 텐서 변환
+        image = self.to_tensor(image)
+        mask = self.to_tensor(mask)
+        mask = (mask > 0.5).float()  # Binary mask 처리
+
+        return {
+            "image": image,
+            "text": text,
+            "mask": mask,
+            "filename": filename
+        }

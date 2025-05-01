@@ -10,8 +10,9 @@ class GroundingModel(nn.Module):
             nn.Linear(self.text_encoder.output_dim, 1024),
             nn.ReLU(),
             nn.Linear(1024, 1024),
+            nn.Tanh()
         )
-        self.decoder = UNetDecoder(in_channels=768, mid_channels=[1024, 512, 256, 128])
+        self.decoder = UNetDecoder(in_channels=1024, mid_channels=[1024, 512, 256, 128])
 
     def forward(self, image, text):
         enc_feat1, enc_feat2, enc_feat3, bottleneck = self.image_encoder(image)

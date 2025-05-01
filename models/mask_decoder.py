@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class UNetDecoder(nn.Module):
-    def __init__(self, in_channels=768, mid_channels=[1024, 512, 256, 128], out_channels=1):
+    def __init__(self, in_channels=1024, mid_channels=[1024, 512, 256, 128], out_channels=1):
         """
         U-Net 기반 디코더 (ImageEncoder의 출력 구조에 맞춤)
         in_channels: bottleneck 채널 수 (예: 768)
@@ -59,7 +59,6 @@ class UNetDecoder(nn.Module):
 
         # 출력층
         self.final_conv = nn.Conv2d(mid_channels[3], out_channels, kernel_size=1)
-        self.activation = nn.Sigmoid()
 
     def forward(self, x, enc_feat3, enc_feat2, enc_feat1):
         # 1단계: x(768) → 1024 업샘플 + enc_feat3(1024) concat
@@ -87,7 +86,4 @@ class UNetDecoder(nn.Module):
         x = self.upconvs[3](x)
         x = self.dec_blocks[3](x)
 
-        # 출력 마스크
-        x = self.final_conv(x)
-        mask = self.activation(x)
-        return mask
+        return self.final_conv(x)
