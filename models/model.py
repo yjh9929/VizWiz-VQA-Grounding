@@ -4,7 +4,7 @@ from models import TextEncoder, ImageEncoder, UNetDecoder
 class GroundingModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.image_encoder = ImageEncoder(pretrained=True)
+        self.image_encoder = ImageEncoder()
         self.text_encoder = TextEncoder()
         self.fusion = nn.Sequential(
             nn.Linear(self.text_encoder.output_dim, 1024),

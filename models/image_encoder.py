@@ -1,5 +1,7 @@
+import torch.nn.functional as F
 import torch.nn as nn
 from transformers import CLIPModel
+import torch.nn as nn
 
 class ImageEncoder(nn.Module):
     def __init__(self, model_name="openai/clip-vit-large-patch14-336", pretrained=True):

@@ -141,6 +141,8 @@ for epoch in range(start_epoch, config["num_epochs"]):
 # 최종save
 torch.save(model.state_dict(), f"outputs/clip-vit-L-p14-336-wo-sigmoid_epoch{config['num_epochs']}.pt")
 
+print(f" Final model saved")
+
 
 
 

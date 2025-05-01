@@ -25,8 +25,8 @@ class UNetDecoder(nn.Module):
                 nn.Conv2d(mid_channels[0] + 1024, mid_channels[0], kernel_size=3, padding=1),
                 nn.BatchNorm2d(mid_channels[0]),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(mid_channels[0], mid_channels[0], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[0]),
+                nn.Conv2d(1024, 1024, kernel_size=3, padding=1),
+                nn.BatchNorm2d(1024),
                 nn.ReLU(inplace=True)
             ),
             # 2단계 디코더 블록 (1024 + 512 = 1536 → 512)
@@ -47,12 +47,13 @@ class UNetDecoder(nn.Module):
                 nn.BatchNorm2d(256),
                 nn.ReLU(inplace=True)
             ),
+            # 3번째 블록 (skip 없음)
             nn.Sequential(
-                nn.Conv2d(mid_channels[3], mid_channels[3], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[3]),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.BatchNorm2d(128),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(mid_channels[3], mid_channels[3], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[3]),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.BatchNorm2d(128),
                 nn.ReLU(inplace=True)
             )
         ])
@@ -87,3 +88,8 @@ class UNetDecoder(nn.Module):
         x = self.dec_blocks[3](x)
 
         return self.final_conv(x)
+
+# 사용 예시:
+# encoder_outputs = [enc_feat1 (1/2), enc_feat2 (1/4), enc_feat3 (1/8), bottleneck_feature (1/16)]
+# decoder = UNetDecoder(in_channels=512)
+# mask_pred = decoder(bottleneck_feature, enc_feat3, enc_feat2, enc_feat1)
