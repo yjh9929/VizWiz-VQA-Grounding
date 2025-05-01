@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class UNetDecoder(nn.Module):
-    def __init__(self, in_channels=1024, mid_channels=[512, 256, 128, 64], out_channels=1):
+    def __init__(self, in_channels=1024, mid_channels=[1024, 512, 256, 128], out_channels=1):
         """
         U-Net 기반 디코더를 구성합니다.
         in_channels: 인코더 최종 출력 채널 수 (예: 512)
@@ -23,40 +23,40 @@ class UNetDecoder(nn.Module):
         # 업샘플 후에 이어지는 합성곱 블록들을 정의 (Conv2d + BatchNorm2d + ReLU 반복)
         # 각 합성곱 블록은 업샘플 출력과 대응되는 인코더 특징맵이 concatenation된 입력을 처리
         self.dec_blocks = nn.ModuleList([
-            # 첫 번째 디코더 블록: 업샘플 256채널 + 인코더 skip 256채널 = 입력 512채널 -> 출력 256채널
+            # 0번째 블록
             nn.Sequential(
-                nn.Conv2d(mid_channels[0] * 2, mid_channels[0], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[0]),
+                nn.Conv2d(2048, 1024, kernel_size=3, padding=1),
+                nn.BatchNorm2d(1024),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(mid_channels[0], mid_channels[0], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[0]),
+                nn.Conv2d(1024, 1024, kernel_size=3, padding=1),
+                nn.BatchNorm2d(1024),
                 nn.ReLU(inplace=True)
             ),
-            # 두 번째 디코더 블록: 업샘플 128채널 + 인코더 skip 128채널 = 입력 256채널 -> 출력 128채널
+            # 1번째 블록 (512 업샘플 + 1024 skip = 1536)
             nn.Sequential(
-                nn.Conv2d(mid_channels[1] * 2, mid_channels[1], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[1]),
+                nn.Conv2d(1536, 512, kernel_size=3, padding=1),
+                nn.BatchNorm2d(512),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(mid_channels[1], mid_channels[1], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[1]),
+                nn.Conv2d(512, 512, kernel_size=3, padding=1),
+                nn.BatchNorm2d(512),
                 nn.ReLU(inplace=True)
             ),
-            # 세 번째 디코더 블록: 업샘플 64채널 + 인코더 skip 64채널 = 입력 128채널 -> 출력 64채널
+            # 2번째 블록 (256 업샘플 + 1024 skip = 1280)
             nn.Sequential(
-                nn.Conv2d(mid_channels[2] * 2, mid_channels[2], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[2]),
+                nn.Conv2d(1280, 256, kernel_size=3, padding=1),
+                nn.BatchNorm2d(256),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(mid_channels[2], mid_channels[2], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[2]),
+                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.BatchNorm2d(256),
                 nn.ReLU(inplace=True)
             ),
-            # 네 번째 디코더 블록: 업샘플 32채널 (skip 연결 없음, 최종 단계) -> 출력 32채널
+            # 3번째 블록 (skip 없음)
             nn.Sequential(
-                nn.Conv2d(mid_channels[3], mid_channels[3], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[3]),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.BatchNorm2d(128),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(mid_channels[3], mid_channels[3], kernel_size=3, padding=1),
-                nn.BatchNorm2d(mid_channels[3]),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.BatchNorm2d(128),
                 nn.ReLU(inplace=True)
             )
         ])
