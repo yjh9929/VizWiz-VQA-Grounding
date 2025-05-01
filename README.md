@@ -10,22 +10,22 @@ Given an image-question pair, the task is to predict the region in the image tha
 ## 📂Project Structure
 ```project/
 ├── README.md
-├── models/ │
-    ├── init.py │
-    ├── image_encoder.py │
-    ├── text_encoder.py # me │
-    ├── concat.py # me │
-    ├── mask_decoder.py # unet │
-    └── model.py # me
-├── data/ │
-    ├── binary_masks_png/ │
-    │   ├── train/ │
-    │   └── val/ │
-    ├── test/ │
-    ├── train/ │
-    ├── val/ │
-    ├── test_grounding.json │
-    ├── train_grounding.json │
+├── models/
+    ├── init.py
+    ├── image_encoder.py
+    ├── text_encoder.py
+    ├── concat.py
+    ├── mask_decoder.py
+    └── model.py 
+├── data/
+    ├── binary_masks_png/
+    │   ├── train/
+    │   └── val/
+    ├── test/
+    ├── train/
+    ├── val/
+    ├── test_grounding.json
+    ├── train_grounding.json
     └── val_grounding.json
 ├── train.py
 ├── dataset.py
@@ -36,13 +36,24 @@ Given an image-question pair, the task is to predict the region in the image tha
 └── config.yml
 ```
 ## ⚙️ Installation
-
+    apt update
+    apt install -y git
+    git
+    git config --global user.name "<yourname>"
+    git config --global user.email "<youremail>"
+    git clone https://github.com/yjh9929/VizWiz-VQA-Grounding.git
+    pip install torch torchvision transformers pyyaml
+    pip install tqdm
+    pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 ## 🚀 Running the Code
+    CUDA_VISIBLE_DEVICES=0 python train.py
 
 ## 🧠 Model Design
 
 ## 📊 Evaluation
+    python visualize_predictions.py
+    python IoU.py
 
 ## 🔗 References
 

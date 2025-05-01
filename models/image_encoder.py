@@ -4,33 +4,28 @@ from transformers import CLIPModel
 import torch.nn as nn
 
 class ImageEncoder(nn.Module):
-    def __init__(self, model_name="openai/clip-vit-large-patch14-336"):
+    def __init__(self, model_name="openai/clip-vit-large-patch14-336", pretrained=True):
         super(ImageEncoder, self).__init__()
-        clip_model = CLIPModel.from_pretrained(model_name)
+        if pretrained:
+            clip_model = CLIPModel.from_pretrained(model_name)
+        else:
+            clip_model = CLIPModel.from_config(model_name)
         self.vision_encoder = clip_model.vision_model
-        self.out_channels = self.vision_encoder.config.hidden_size  # 1024 or 768
+        self.out_channels = self.vision_encoder.config.hidden_size
 
-    def forward(self, pixel_values):
-        # input shape: (B, 3, H, W)
-        outputs = self.vision_encoder(pixel_values, output_hidden_states=True)
-        hidden_states = outputs.hidden_states  # tuple: len=13 (1 + 12 layers)
+    def forward(self, x):
+        outputs = self.vision_encoder(x, output_hidden_states=True)
+        hidden_states = outputs.hidden_states
 
-        # hidden_states[0] = patch embedding after projection
-        # hidden_states[1]~[12] = transformer layers 1~12 output
+        # 예: 중간 레이어 3개 + 마지막 bottleneck
+        enc_feat1 = hidden_states[4]  # (B, seq, D)
+        enc_feat2 = hidden_states[7]
+        enc_feat3 = hidden_states[9]
+        bottleneck = outputs.last_hidden_state
 
-        # 적절한 레이어에서 skip features 선택 (뒤에서부터 깊은 순서)
-        enc_feat3 = self._to_feature_map(hidden_states[9])   # 1/8 scale
-        enc_feat2 = self._to_feature_map(hidden_states[6])   # 1/4 scale
-        enc_feat1 = self._to_feature_map(hidden_states[3])   # 1/2 scale
-        bottleneck = self._to_feature_map(hidden_states[12]) # 1/16 scale
+        def reshape_feat(feat):
+            feat = feat[:, 1:, :].transpose(1, 2)  # (B, D, seq_len)
+            patch_size = int((feat.shape[-1]) ** 0.5)
+            return feat.view(feat.shape[0], feat.shape[1], patch_size, patch_size)
 
-        return bottleneck, enc_feat3, enc_feat2, enc_feat1
-
-    def _to_feature_map(self, hidden):
-        # hidden: (B, seq_len, D) → (B, D, H, W)
-        B, seq_len, D = hidden.shape
-        spatial_tokens = hidden[:, 1:, :]  # remove CLS token
-        H = W = int((seq_len - 1) ** 0.5)
-        feature_map = spatial_tokens.transpose(1, 2).contiguous().view(B, D, H, W)
-        return feature_map
-       
+        return tuple(map(reshape_feat, [enc_feat1, enc_feat2, enc_feat3])) + (reshape_feat(bottleneck),)

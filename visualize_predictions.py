@@ -8,7 +8,7 @@ from models import TextEncoder, ImageEncoder, GroundingModel
 # 모델 로드
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = GroundingModel().to(device)
-model.load_state_dict(torch.load("outputs/model_clip_epoch10.pt", map_location=device))
+model.load_state_dict(torch.load("outputs/clip-vit-L-p14-336-wo-sigmoid_epoch3.pt", map_location=device))
 model.eval()
 
 # 테스트 데이터
@@ -18,7 +18,7 @@ text_input = [f"Q: {question}"]
 
 # 전처리
 transform = T.Compose([
-    T.Resize((224, 224)),
+    T.Resize((336, 336)),
     T.ToTensor()
 ])
 
@@ -27,12 +27,7 @@ image = transform(Image.open(image_path).convert("RGB")).unsqueeze(0).to(device)
 # 예측
 with torch.no_grad():
     mask = model(image, text_input)
-    mask = torch.sigmoid(mask)
-    mask = torch.nn.functional.interpolate(mask, size=(224, 224), mode="bilinear")[0, 0].cpu()
-    mask = mask.numpy()
-
-    # 정규화
-    mask = (mask - mask.min()) / (mask.max() - mask.min() + 1e-6)
+    mask = torch.nn.functional.interpolate(mask, size=(336, 336), mode="bilinear")[0, 0].cpu()
 
 # 시각화 및 저장
 plt.figure(figsize=(10, 5))
@@ -40,14 +35,15 @@ plt.subplot(1, 2, 1)
 plt.imshow(Image.open(image_path))
 plt.title("Original Image")
 
+# sigmoid + threshold
 plt.subplot(1, 2, 2)
 plt.imshow(Image.open(image_path))
-plt.imshow(mask, cmap="gray", alpha=0.5)
+plt.imshow(mask, alpha=0.5, cmap="jet")
 plt.title("Predicted Mask")
 
 # 저장
-os.makedirs("result/model_336_epoch10", exist_ok=True)
-save_path = "result/model_336_epoch10/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
+os.makedirs("result/clip-vit-L-p14-336-wo-sigmoid_epoch3", exist_ok=True)
+save_path = "result/clip-vit-L-p14-336-wo-sigmoid_epoch3/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
 plt.savefig(save_path)
 plt.close()
 
