@@ -140,7 +140,7 @@ for epoch in range(start_epoch, config["num_epochs"]):
 
 # 최종save
 torch.save(model.state_dict(), f"outputs/model_final_epoch_0501_{config['num_epochs']}.pt")
-
+print(f" Final model saved")
 
 
 
