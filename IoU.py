@@ -13,7 +13,7 @@ mask_dir = "data/vizwiz/binary_masks_png/val"
 
 # 1. 모델 로드
 model = GroundingModel()
-model.load_state_dict(torch.load("outputs/clip-vit-large-patch14-336_epoch100.pt"))
+model.load_state_dict(torch.load("outputs/clip-vit-large-patch14-336_epoch3.pt"))
 model.eval().cuda()
 
 # 2. val json 불러오기
@@ -24,7 +24,7 @@ with open(val_json, "r") as f:
 ious = []
 
 transform = T.Compose([
-    T.Resize((224, 224)),
+    T.Resize((336, 336)),
     T.ToTensor()
 ])
 

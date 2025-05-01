@@ -105,7 +105,7 @@ for epoch in range(config["num_epochs"]):
 
     avg_val_loss = val_loss / len(val_loader)
     print(f"[Epoch {epoch+1}] Average Validation Loss: {avg_val_loss:.4f}")
-    if (epoch + 1) % 10 == 0:
+    if (epoch + 1) % 3 == 0:
         torch.save(model.state_dict(), f"outputs/clip-vit-large-patch14-336_epoch{epoch+1}.pt")
         print(f"✅ Model saved to {save_path}")
 
