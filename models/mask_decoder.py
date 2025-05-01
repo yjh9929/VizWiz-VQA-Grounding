@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class UNetDecoder(nn.Module):
-    def __init__(self, in_channels=512, mid_channels=[256, 128, 64, 32], out_channels=1):
+    def __init__(self, in_channels=1024, mid_channels=[512, 256, 128, 64], out_channels=1):
         """
         U-Net 기반 디코더를 구성합니다.
         in_channels: 인코더 최종 출력 채널 수 (예: 512)
