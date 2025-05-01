@@ -16,11 +16,11 @@ class GroundingModel(nn.Module):
         self.decoder = UNetDecoder(in_channels=self.image_encoder.out_channels)
 
     def forward(self, image, text):
-        bottleneck = self.image_encoder(image)
+        bottleneck, enc3, enc2, enc1 = self.image_encoder(image)
         text_feat = self.text_encoder(text)
 
-        weight = self.fusion(text_feat).unsqueeze(-1).unsqueeze(-1)  # (batch, 768, 1, 1)
-        fused = bottleneck * weight
+        weight = self.fusion(text_feat).unsqueeze(-1).unsqueeze(-1)  # (B, C, 1, 1)
+        fused = bottleneck * weight  # (B, C, H, W)
 
-        output = self.decoder(fused)
+        output = self.decoder(fused, enc3, enc2, enc1)
         return output
