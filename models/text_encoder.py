@@ -2,7 +2,7 @@ import torch.nn as nn
 from transformers import CLIPTokenizer, CLIPTextModel
 
 class TextEncoder(nn.Module):
-    def __init__(self, model_name="openai/clip-vit-base-patch32"):
+    def __init__(self, model_name="openai/clip-vit-large-patch14-336"):
         super().__init__()
         self.tokenizer = CLIPTokenizer.from_pretrained(model_name)
         self.encoder = CLIPTextModel.from_pretrained(model_name)

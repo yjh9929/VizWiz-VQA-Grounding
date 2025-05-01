@@ -2,3 +2,5 @@ data/
 outputs/
 result/
 __pycache__/
+models/__pycache__/
+*.pyc
