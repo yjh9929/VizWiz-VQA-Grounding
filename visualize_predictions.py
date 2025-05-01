@@ -37,7 +37,7 @@ plt.title("Original Image")
 
 plt.subplot(1, 2, 2)
 plt.imshow(Image.open(image_path))
-plt.imshow(mask, alpha=0.5, cmap="jet")
+plt.imshow(mask, alpha=0.5, cmap="jet", interpolation='bilinear')
 plt.title("Predicted Mask")
 
 # 저장

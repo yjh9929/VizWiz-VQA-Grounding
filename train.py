@@ -65,17 +65,13 @@ for epoch in range(config["num_epochs"]):
         masks = batch["mask"]
         texts = batch["text"]
 
-        pred_masks = model(images, texts)
-        pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
-
-        loss = loss_fn(pred_masks, masks)
-        optimizer.zero_grad()
         with autocast():
             pred_masks = model(images, texts)
             pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
             loss = loss_fn(pred_masks, masks)
+        optimizer.zero_grad()
+        scaler.scale(loss).backward()
 
-        scaler.scale(loss).backward()  # ✅ AMP 대응
         scaler.step(optimizer)
         scaler.update()
 
@@ -105,13 +101,18 @@ for epoch in range(config["num_epochs"]):
 
     avg_val_loss = val_loss / len(val_loader)
     print(f"[Epoch {epoch+1}] Average Validation Loss: {avg_val_loss:.4f}")
-    if (epoch + 1) % 3 == 0:
-        torch.save(model.state_dict(), f"outputs/clip-vit-large-patch14-336_epoch{epoch+1}.pt")
-        print(f"✅ Model saved to {save_path}")
+    # 10 epoch마다 체크포인트 저장
+    if (epoch + 1) % 10 == 0:
+        checkpoint_path = f"outputs/baic_checkpoint_epoch{epoch+1}.pt"
+        torch.save(model.state_dict(), checkpoint_path)
+        print(f"✅ Checkpoint saved at {checkpoint_path}")
 
-print("🎯 Training Completed!")
 
-# save
+
+# 최종save
+torch.save(model.state_dict(), f"outputs/baic_model_final_epoch{config['num_epochs']}.pt")
+
+
 '''
 # GPU 병렬 사용
 torch.save(model.module.state_dict(), "outputs/clip-vit-large-patch14-336_epoch100.pt")
