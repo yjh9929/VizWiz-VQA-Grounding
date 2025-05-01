@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 
 class UNetDecoder(nn.Module):
+
     def __init__(self, in_channels=1024, mid_channels=[1024, 512, 256, 128], out_channels=1):
         """
         U-Net 기반 디코더를 구성합니다.
@@ -108,3 +109,4 @@ class UNetDecoder(nn.Module):
 # encoder_outputs = [enc_feat1 (1/2), enc_feat2 (1/4), enc_feat3 (1/8), bottleneck_feature (1/16)]
 # decoder = UNetDecoder(in_channels=512)
 # mask_pred = decoder(bottleneck_feature, enc_feat3, enc_feat2, enc_feat1)
+

@@ -1,4 +1,5 @@
 import torch.nn.functional as F
+import torch.nn as nn
 from transformers import CLIPModel
 import torch.nn as nn
 
@@ -32,3 +33,4 @@ class ImageEncoder(nn.Module):
         H = W = int((seq_len - 1) ** 0.5)
         feature_map = spatial_tokens.transpose(1, 2).contiguous().view(B, D, H, W)
         return feature_map
+       
