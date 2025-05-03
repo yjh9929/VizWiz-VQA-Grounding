@@ -8,7 +8,7 @@ from models import TextEncoder, ImageEncoder, GroundingModel
 # 모델 로드
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = GroundingModel().to(device)
-model.load_state_dict(torch.load("outputs/clip-vit-large-patch14-336_epoch3.pt", map_location=device))
+model.load_state_dict(torch.load("outputs/smart_baic_checkpoint_epoch20.pt", map_location=device))
 model.eval()
 
 # 테스트 데이터
@@ -41,8 +41,8 @@ plt.imshow(mask, alpha=0.5, cmap="jet", interpolation='bilinear')
 plt.title("Predicted Mask")
 
 # 저장
-os.makedirs("result/clip-vit-large-patch14-336_epoch3", exist_ok=True)
-save_path = "result/clip-vit-large-patch14-336_epoch3/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
+os.makedirs("result/smart_baic_checkpoint_epoch20", exist_ok=True)
+save_path = "result/smart_baic_checkpoint_epoch20/VizWiz_test_00000006_masked.png" # 이거 바꿔가면서 실험해봐요
 plt.savefig(save_path)
 plt.close()
 
