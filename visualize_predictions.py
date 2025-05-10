@@ -35,6 +35,7 @@ plt.subplot(1, 2, 1)
 plt.imshow(Image.open(image_path))
 plt.title("Original Image")
 
+# sigmoid + threshold
 plt.subplot(1, 2, 2)
 plt.imshow(Image.open(image_path))
 plt.imshow(mask, alpha=0.5, cmap="jet", interpolation='bilinear')

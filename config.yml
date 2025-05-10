@@ -15,3 +15,5 @@ dataset:
   train_mask_root: data/vizwiz/binary_masks_png/train  
   val_image_root: data/vizwiz/val            
   val_mask_root: data/vizwiz/binary_masks_png/val 
+
+  resume_checkpoint: outputs/checkpoint_epoch10.pt

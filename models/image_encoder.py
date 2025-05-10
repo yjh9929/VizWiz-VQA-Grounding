@@ -1,20 +1,31 @@
+import torch.nn.functional as F
 import torch.nn as nn
 from transformers import CLIPModel
+import torch.nn as nn
 
 class ImageEncoder(nn.Module):
-    def __init__(self, model_name="openai/clip-vit-large-patch14-336"):
+    def __init__(self, model_name="openai/clip-vit-large-patch14-336", pretrained=True):
         super(ImageEncoder, self).__init__()
-        clip_model = CLIPModel.from_pretrained(model_name)
+        if pretrained:
+            clip_model = CLIPModel.from_pretrained(model_name)
+        else:
+            clip_model = CLIPModel.from_config(model_name)
         self.vision_encoder = clip_model.vision_model
-        self.out_channels = self.vision_encoder.config.hidden_size  # 768
+        self.out_channels = self.vision_encoder.config.hidden_size
 
     def forward(self, x):
-        outputs = self.vision_encoder(x)
-        last_hidden_state = outputs.last_hidden_state  # (B, seq_len, hidden_dim)
+        outputs = self.vision_encoder(x, output_hidden_states=True)
+        hidden_states = outputs.hidden_states
 
-        # (B, seq_len, D) -> (B, D, H, W)로 변환
-        batch_size, seq_len, hidden_dim = last_hidden_state.shape
-        patch_size = int((seq_len - 1) ** 0.5)  # cls token 제외
-        feature = last_hidden_state[:, 1:, :].transpose(1, 2)  # (B, D, seq_len)
-        feature = feature.view(batch_size, hidden_dim, patch_size, patch_size)  # (B, D, H, W)
-        return feature
+        # 예: 중간 레이어 3개 + 마지막 bottleneck
+        enc_feat1 = hidden_states[4]  # (B, seq, D)
+        enc_feat2 = hidden_states[7]
+        enc_feat3 = hidden_states[9]
+        bottleneck = outputs.last_hidden_state
+
+        def reshape_feat(feat):
+            feat = feat[:, 1:, :].transpose(1, 2)  # (B, D, seq_len)
+            patch_size = int((feat.shape[-1]) ** 0.5)
+            return feat.view(feat.shape[0], feat.shape[1], patch_size, patch_size)
+
+        return tuple(map(reshape_feat, [enc_feat1, enc_feat2, enc_feat3])) + (reshape_feat(bottleneck),)

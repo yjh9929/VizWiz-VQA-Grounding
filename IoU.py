@@ -3,6 +3,7 @@ from metrics import compute_iou
 from torchvision.transforms import ToTensor
 from PIL import Image
 import torch, json, os
+import torch.nn.functional as F
 
 from torchvision import transforms as T
 
