@@ -89,17 +89,13 @@ for epoch in range(start_epoch, config["num_epochs"]):
         masks = batch["mask"]
         texts = batch["text"]
 
-        pred_masks = model(images, texts)
-        pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
-
-        loss = loss_fn(pred_masks, masks)
-        optimizer.zero_grad()
         with autocast():
             pred_masks = model(images, texts)
             pred_masks = nn.functional.interpolate(pred_masks, size=masks.shape[-2:], mode='bilinear')
             loss = loss_fn(pred_masks, masks)
+        optimizer.zero_grad()
+        scaler.scale(loss).backward()
 
-        scaler.scale(loss).backward()  # ✅ AMP 대응
         scaler.step(optimizer)
         scaler.update()
 
@@ -129,24 +125,17 @@ for epoch in range(start_epoch, config["num_epochs"]):
 
     avg_val_loss = val_loss / len(val_loader)
     print(f"[Epoch {epoch+1}] Average Validation Loss: {avg_val_loss:.4f}")
-
     # 10 epoch마다 체크포인트 저장
     if (epoch + 1) % 10 == 0:
-        checkpoint_path = f"outputs/checkpoint_epoch{epoch+1}.pt"
+        checkpoint_path = f"outputs/cross_checkpoint_epoch{epoch+1}.pt"
         torch.save(model.state_dict(), checkpoint_path)
         print(f"✅ Checkpoint saved at {checkpoint_path}")
 
 
 
 # 최종save
-torch.save(model.state_dict(), f"outputs/clip-vit-L-p14-336-wo-sigmoid_epoch{config['num_epochs']}.pt")
-
+torch.save(model.state_dict(), f"outputs/cross_model_final_epoch{config['num_epochs']}.pt")
 print(f" Final model saved")
-
-
-
-
-
 
 
 '''
