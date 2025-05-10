@@ -103,14 +103,14 @@ for epoch in range(config["num_epochs"]):
     print(f"[Epoch {epoch+1}] Average Validation Loss: {avg_val_loss:.4f}")
     # 10 epoch마다 체크포인트 저장
     if (epoch + 1) % 10 == 0:
-        checkpoint_path = f"outputs/smart_baic_checkpoint_epoch{epoch+1}.pt"
+        checkpoint_path = f"outputs/cross_checkpoint_epoch{epoch+1}.pt"
         torch.save(model.state_dict(), checkpoint_path)
         print(f"✅ Checkpoint saved at {checkpoint_path}")
 
 
 
 # 최종save
-torch.save(model.state_dict(), f"outputs/smart_baic_model_final_epoch{config['num_epochs']}.pt")
+torch.save(model.state_dict(), f"outputs/cross_model_final_epoch{config['num_epochs']}.pt")
 
 
 '''
