@@ -1,0 +1,19 @@
+batch_size: 4
+num_epochs: 100
+lr: 0.00001
+image_size: [336, 336]
+num_workers: 4
+
+model:
+  encoder: resnet18
+  decoder: unet
+
+dataset:
+  train_json: data/vizwiz/train_grounding.json
+  val_json: data/vizwiz/val_grounding.json  
+  train_image_root: data/vizwiz/train  
+  train_mask_root: data/vizwiz/binary_masks_png/train  
+  val_image_root: data/vizwiz/val            
+  val_mask_root: data/vizwiz/binary_masks_png/val 
+
+  resume_checkpoint: outputs/checkpoint_epoch10.pt
