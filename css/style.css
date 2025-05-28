@@ -19,6 +19,19 @@ body .bg-img {
 body nav {
   background: rgba(255, 255, 255, 0.1);
 }
+
+.navbar-brand img {
+  max-height: 90px;
+  height: auto;
+  width: auto;
+}
+
+.navbar-brand {
+  padding: 0.75rem 1rem;
+}
+
+
+
 body nav .navbar-nav a {
   font-size: 16px;
   text-transform: uppercase;
@@ -141,6 +154,12 @@ a, a:hover {
   text-align: center;
 }
 
+#methods {
+  background-color: #fdf8f3;
+  color: #222; 
+}
+
+
 .fh5co-about-us {
   background: transparent;
   background-repeat: no-repeat;
@@ -180,7 +199,7 @@ a, a:hover {
   width: 100%;
 }
 .fh5co-content-box .card-img-overlay {
-  color: #fff;
+  color: #333;
   text-align: center;
   top: 35%;
 }
@@ -245,6 +264,12 @@ a, a:hover {
   bottom: -10px;
   top: auto;
 }
+
+.gallery {
+  margin-top: 50px; /* 또는 3rem, 조절 가능 */
+}
+
+
 .fh5co-content-box .gallery .card {
   border: none;
   background: transparent;
