@@ -64,27 +64,40 @@ a, a:hover {
 .fh5co-banner-text-box .quote-box h2 span {
   color: #ff8013;
   font-size: 34px;
+}.fh5co-banner-text-box .quote-box {
+  position: relative;
+  max-width: 600px;
+  margin: auto;
+  padding: 3rem 4rem;  /* 텍스트와 quote 이미지 간 간격 확보 */
+  text-align: left;
+  color: #fff;
+  background-color: transparent;
 }
+
+/* 왼쪽 상단 꾸밈 quote */
 .fh5co-banner-text-box .quote-box::before {
   content: "";
   position: absolute;
   height: 38px;
   width: 38px;
-  left: 0;
-  top: 0;
-  background: url("../images/right-quote.png");
-  background-repeat: no-repeat;
+  left: -20px;       /* 약간 바깥쪽 */
+  top: -20px;
+  background: url("../images/right-quote.png") no-repeat;
+  background-size: contain;
 }
+
+/* 오른쪽 하단 꾸밈 quote */
 .fh5co-banner-text-box .quote-box::after {
   content: "";
   position: absolute;
   height: 38px;
   width: 38px;
-  background: url("../images/left-quote.png");
-  background-repeat: no-repeat;
-  right: 0;
-  bottom: 0;
+  right: -20px;
+  bottom: -20px;
+  background: url("../images/left-quote.png") no-repeat;
+  background-size: contain;
 }
+
 .fh5co-banner-text-box a {
   color: #fff;
   border-color: #4e2b0d;
@@ -96,15 +109,12 @@ a, a:hover {
   border-color: gray;
   color: #ff8013;
 }
-
 .fh5co-network, .fh5co-about-us {
-  background: url("../images/about-bg.jpg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
+  background-color: #fdf8f3; /* 부드러운 미색 */
   padding: 50px 0;
   padding-top: 30px;
 }
+
 .fh5co-network figure, .fh5co-about-us figure {
   margin-top: -70px !important;
 }
@@ -178,7 +188,7 @@ a, a:hover {
   position: relative;
   padding: 50px 0;
   margin: 70px 0;
-  background: url("../images/gym2.jpg");
+  background: url("../images/banner.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: #000;
@@ -219,28 +229,11 @@ a, a:hover {
   margin: auto;
   margin-bottom: 50px;
 }
-.fh5co-content-box .trainers .quote-box2::before {
-  content: "";
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 0;
-  top: -10px;
-  background: url("../images/right-quote-white.png");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
+.fh5co-content-box .trainers .quote-box2::before,
 .fh5co-content-box .trainers .quote-box2::after {
-  content: "";
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  background: url("../images/left-quote-white.png");
-  background-repeat: no-repeat;
-  right: 0;
-  bottom: -10px;
-  background-size: 100% 100%;
+  content: none;
 }
+
 .fh5co-content-box .trainers::before, .fh5co-content-box .trainers::after {
   content: "";
   position: absolute;
