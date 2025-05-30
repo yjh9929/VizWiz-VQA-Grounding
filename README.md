@@ -1,5 +1,8 @@
-# VizWiz-VQA-Grounding (2025)
-2025 1st place (will)  
+#🏆 Workshop Spotlight at CVPR 2025
+Our work has been selected as a spotlight paper at a workshop in CVPR 2025! ( https://cvpr.thecvf.com/ )
+We are honored that our research was recognized and featured among the notable contributions. 
+
+# Tasks: VizWiz-VQA-Grounding
  This project was developed for the [VizWiz-VQA-Grounding Challenge](https://vizwiz.org/tasks-and-datasets/visual-qa/) 2025. The goal is to return grounded visual evidence for answers to visual questions posed by people with visual impairments. 
 
 
