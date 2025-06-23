@@ -55,8 +55,8 @@ Upsampling Decoder <br><span>BY BANDI</span> </h2>
         <h4 class="wow bounceInUp"></h4>
         <h2 class="wow bounceInRight">TASKS</h2>
         <hr />
-        <h5 class="wow bounceInLeft">NETWORK SUMMER 2017</h5>
-        <p class="wow bounceInDown">The lowdown on Blood Flow Restriction training • FREE CEC/CPD • ​Let's compare ​Raw Vs Cooked • Building Ab, Core &amp; Pelvic strength • Get​ clients short-term wins from long-term goals • So you want to operate multiple clubs? + LOADS MORE</p>
+        <h5 class="wow bounceInLeft">VizWiz-VQA-Grounding</h5>
+        <p class="wow bounceInDown">Given a visual question (question-image pair), the task is to return the region in the image used to arrive at the answer to the visual question. The submissions will be evaluated based on the mean Intersection over Union (IoU) score across all test images. The team which achieves the maximum IoU score wins this challenge.</p>
       </div>
       <div class="col-md-6">
         <figure class="wow bounceInDown"> <img src="images/m2.png" alt="gym" class="img-fluid" /> </figure>
@@ -71,7 +71,19 @@ Upsampling Decoder <br><span>BY BANDI</span> </h2>
       <h2 class="wow bounceInLeft" data-wow-delay=".25s">METHODS</h2>
       <hr/>
       <p class="wow bounceInRight" data-wow-delay=".25s">
-        Trainers, athletes and serious clients alike are looking for the toughest, most brutally productive training techniques...
+        In this section, we provide a detailed description of the three
+main components of the proposed mode
+1) CLIP Encoder. We use the pre-trained CLIP ViTL/14-336 model [3] to extract embeddings from both the
+image and the concatenated question-answer pair. The visual embedding is taken from the final transformer layer,
+excluding the CLS token, and reshaped into a spatial feature map of shape (B, D, H, W).
+2) Cross-Attention Block. A single-layer multi-head
+cross-attention is employed to align textual and visual information. Specifically, the image tokens (flattened spatial
+features) serve as queries, while the text tokens act as the
+keys and values. This allows the model to dynamically attend to relevant image regions based on the contextual information provided by the question.
+3) Lightweight U-Net Decoder. The fused features
+from the cross-attention block are reshaped back into spatial form and passed through a lightweight U-Net-style decoder [4], which produces the final binary mask indicating
+the answer grounding region.
+
       </p>
     </div>
   </div>
@@ -87,8 +99,9 @@ Upsampling Decoder <br><span>BY BANDI</span> </h2>
       <div class="col-md-7 pl-0">
         <div class="wow bounceInRight" data-wow-delay=".25s">
           <div class="card-img-overlay">
-            <p>Great weekend, met lots of cool people and took away quite a bit. Thank you for the experience, and to you and your professional team for 
-              making things seem </p>
+            <p>The cross-attention block is applied after visual features
+are extracted and flattened, but before being reshaped and
+decoded. This design allows the early integration of semantic cues into the spatial reasoning process. </p>
           </div>
           <div class="img-fluid" style="background-color: #fdf8f3; width: 100%; height: 300px;"></div>
         </div>
@@ -100,7 +113,8 @@ Upsampling Decoder <br><span>BY BANDI</span> </h2>
         <div class="card">
           <div class="card-body mb-4 wow bounceInLeft" data-wow-delay=".25s">
             <h4 class="card-title">Limitation 1</h4>
-            <p class="card-text">I just wanted to sincerely thank you for the opportunity to represent Precision Nutrition and the US at such an amazing event. </p>
+            <p class="card-text">ILimitation of Random Crop Preprocessing Without
+Considering Dataset Characteristics. </p>
               <img class="card-img-top img-fluid wow bounceInRight" data-wow-delay=".25s" src="images/m1.png" alt="Card image">
               </div>
            </div>
@@ -110,7 +124,7 @@ Upsampling Decoder <br><span>BY BANDI</span> </h2>
         <div class="card"> 
           <div class="card-body mt-4 wow bounceInDown" data-wow-delay=".25s">
             <h4 class="card-title">Limitation 2</h4>
-            <p class="card-text">I just wanted to sincerely thank you for the opportunity to represent Precision Nutrition and the US at such an amazing event. </p>
+            <p class="card-text">Difficulty in Detecting Small and Edge-Located Objects. </p>
             <img class="card-img-top img-fluid wow bounceInUp" data-wow-delay=".25s" src="images/m3.png" alt="Card image">
           </div>
         </div>
@@ -120,7 +134,7 @@ Upsampling Decoder <br><span>BY BANDI</span> </h2>
         <div class="card">
           <div class="card-body mb-4 wow bounceInRight" data-wow-delay=".25s">
             <h4 class="card-title">Limitation 3</h4>
-            <p class="card-text">I just wanted to sincerely thank you for the opportunity to represent Precision Nutrition and the US at such an amazing event. </p>
+            <p class="card-text">Limitation in Binary Conversion of Grounding Regions </p>
             <img class="card-img-top img-fluid wow bounceInLeft" data-wow-delay=".25s" src="images/task.png" alt="Card image">
             </div>
           </div>
